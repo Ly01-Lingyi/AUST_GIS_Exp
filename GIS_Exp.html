@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>AUST智慧校园</title>
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
+    <style>
+        html, body, #container {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }  
+    </style>
+</head>
+
+<body>
+
+  <!-- 容器 -->
+  <div id="container"></div>
+  <div class="info">
+      <h4>学校天气</h4><hr>
+      <p id='forecast'></p>
+  </div>
+
+  <!-- API验证 -->
+  <script type="text/javascript">
+    window._AMapSecurityConfig = {
+      securityJsCode: "b1ec657c141a3c894e7c70d0c2c22fc4",
+        };
+  </script>
+  <script
+    type="text/javascript"
+    src="https://webapi.amap.com/maps?v=2.0&key=30b7cc11436eda0420ba7f88121db11e"
+  >
+  </script>
+
+  <!--地图初始化-->
+  <script type="text/javascript">
+  var map = new AMap.Map("container", {
+    center: [117.02147,32.55216],
+    zoom:16.75,
+    viewMode:'3D',
+    pitch: 35,
+  });
+
+  </script>
+
+  <!--控制插件-->
+  <script>
+
+    AMap.plugin('AMap.MapType',function(){ 
+      var MapType = new AMap.MapType({
+          position: {
+            top: '120px',
+            left: '105px'
+          }
+      }); 
+      map.addControl(MapType); 
+    });
+
+      AMap.plugin('AMap.Scale',function(){ 
+      var Scale = new AMap.Scale(); 
+      map.addControl(Scale); 
+    });
+
+      AMap.plugin('AMap.ControlBar',function(){ 
+      var ControlBar = new AMap.ControlBar({
+          position: {
+            top: '15px',
+            left: '15px'
+          }
+      }); 
+      map.addControl(ControlBar); 
+    });
+
+      AMap.plugin('AMap.Geolocation',function(){ 
+      var Geolocation = new AMap.Geolocation(); 
+      map.addControl(Geolocation); 
+    });
+
+      AMap.plugin('AMap.ToolBar',function(){ 
+      var ToolBar = new AMap.ToolBar({
+          position: {
+            bottom: '75px',
+            right: '16px'
+          }
+      }); 
+      map.addControl(ToolBar); 
+    });  
+
+  </script>
+
+  <!-- 天气插件 -->
+  <script type="text/javascript">
+
+      AMap.plugin('AMap.Weather', function() {
+          var weather = new AMap.Weather();
+          //查询实时天气信息, 查询的城市到行政级别的城市，如朝阳区、杭州市
+          //未来4天天气预报
+          weather.getForecast('淮南市', function(err, data) {
+              if (err) {return;}
+              var str = [];
+              for (var i = 0,dayWeather; i < data.forecasts.length; i++) {
+                  dayWeather = data.forecasts[i];
+                  str.push(dayWeather.date+' <span class="weather">'+dayWeather.dayWeather+'</span> '+ dayWeather.nightTemp + '~' + dayWeather.dayTemp + '℃');
+              }
+              document.getElementById('forecast').innerHTML = str.join('<br>');
+          });
+      });
+  </script>
+
+  <!-- 右键 -->
+  <script type="text/javascript">
+
+      var contextMenu = new AMap.ContextMenu();
+
+      contextMenu.addItem("放大一级", function () {
+          map.zoomIn();
+      }, 0);
+
+      contextMenu.addItem("缩小一级", function () {
+          map.zoomOut();
+      }, 1);
+
+      contextMenu.addItem("还原地图", function (e) {
+          map.setZoomAndCenter(16.75, [117.02147,32.55216]);
+          map.setPitch(35);
+          map.setRotation(0);
+          AMap.Map.s
+      });
+
+      //地图绑定鼠标右击事件——弹出右键菜单
+      map.on('rightclick', function (e) {
+          contextMenu.open(map, e.lnglat);
+          contextMenuPositon = e.lnglat;
+      });
+
+      contextMenu.open(map, lnglat);
+  </script>
+<script>
+//创建图片图层
+var imageLayer = new AMap.ImageLayer({
+  url: "file:///E:/otr/AUST/task/2025-2026/GIS_Exp/%E5%B9%B3%E9%9D%A2%E5%9B%BE/2020.09%E5%BB%BA%E7%AD%91%E5%91%BD%E5%90%8D%E5%9B%BE.jpg", //图片 Url
+  bounds: new AMap.Bounds([117.01096,32.548147], [117.032687,32.557834]), //图片范围大小的经纬度，传入西南和东北的经纬度坐标
+  zIndex: 2, //图层的层级
+  zooms: [15, 20], //设置可见级别，[最小级别，最大级别]
+  opacity: 0.3
+});
+
+//将图层添加至地图实例
+map.add(imageLayer);
+</script>
+
+</body>
+</html>
